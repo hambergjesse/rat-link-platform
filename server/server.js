@@ -25,10 +25,16 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Add trust proxy for production
+app.set("trust proxy", 1);
+
 // CORS configuration
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL || process.env.CLIENT_URL_ALT],
+    origin:
+      process.env.NODE_ENV === "production"
+        ? [process.env.CLIENT_URL, process.env.CLIENT_URL_ALT]
+        : "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -38,23 +44,24 @@ app.use(
 // Session configuration
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "your-secret-key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGODB_URI,
       collectionName: "rat-link-platform",
-      ttl: 24 * 60 * 60, // 1 day
+      ttl: 24 * 60 * 60,
       autoRemove: "native",
       crypto: {
-        secret: process.env.SESSION_SECRET || "your-secret-key",
+        secret: process.env.SESSION_SECRET,
       },
-      touchAfter: 24 * 3600, // Only update the session every 24 hours unless the data changes
+      touchAfter: 24 * 3600,
     }),
     cookie: {
       secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+      domain: process.env.NODE_ENV === "production" ? "brckt.me" : "localhost",
     },
   })
 );
