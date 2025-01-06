@@ -161,4 +161,28 @@ router.delete("/links/:id", isAuthenticated, async (req, res) => {
   }
 });
 
+// Delete account
+router.delete("/account", isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Delete all user's links
+    await Link.deleteMany({ userId });
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    // Logout the user
+    req.logout((err) => {
+      if (err) {
+        console.error("Logout error:", err);
+      }
+      res.json({ message: "Account deleted successfully" });
+    });
+  } catch (error) {
+    console.error("Account deletion error:", error);
+    res.status(500).json({ message: "Error deleting account" });
+  }
+});
+
 module.exports = router;

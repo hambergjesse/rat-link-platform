@@ -30,24 +30,28 @@ passport.use(
         let user = await User.findOne({ twitterId: profile.id });
 
         if (!user) {
-          // Create new user
+          // Create new user with empty profile picture
           user = await User.create({
             twitterId: profile.id,
             username: profile.username || `user_${profile.id}`,
-            profilePicture: profile.photos?.[0]?.value || "",
+            profilePicture: "", // Initialize with empty profile picture
             bio: profile._json?.description || "",
           });
           console.log("New user created:", user.username);
         } else {
-          // Update existing user's info
-          user.username = profile.username || user.username;
-          user.profilePicture =
-            profile.photos?.[0]?.value || user.profilePicture;
-          if (profile._json?.description) {
-            user.bio = profile._json.description;
+          // Update only username and bio if needed, preserve existing profile picture
+          if (
+            profile.username !== user.username ||
+            (profile._json?.description &&
+              profile._json.description !== user.bio)
+          ) {
+            user.username = profile.username || user.username;
+            if (profile._json?.description) {
+              user.bio = profile._json.description;
+            }
+            await user.save();
+            console.log("Existing user updated:", user.username);
           }
-          await user.save();
-          console.log("Existing user updated:", user.username);
         }
 
         return done(null, user);

@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    profilePicturePublicId: {
+      type: String,
+      default: "",
+    },
     createdAt: {
       type: Date,
       default: Date.now,
@@ -33,5 +37,19 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ username: 1 }, { unique: true });
 userSchema.index({ twitterId: 1 }, { unique: true });
+
+userSchema.pre("remove", async function (next) {
+  try {
+    if (this.profilePicturePublicId) {
+      const { cloudinary } = require("../config/cloudinary");
+      await cloudinary.uploader.destroy(
+        `rat-link-platform/profile-pictures/${this.profilePicturePublicId}`
+      );
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = mongoose.model("User", userSchema);

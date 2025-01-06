@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { HexColorPicker } from "react-colorful";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { useTheme } from "../contexts/ThemeContext";
 import { platforms } from "../utils/platforms";
 import ImageUpload from "./ImageUpload";
 import api from "../utils/axios";
@@ -36,6 +37,7 @@ class ErrorBoundary extends React.Component {
 }
 
 const EditProfile = () => {
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -195,6 +197,17 @@ const EditProfile = () => {
     }
   };
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    try {
+      await api.delete("/api/account");
+      navigate("/");
+    } catch (error) {
+      setError("Failed to delete account");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -228,13 +241,15 @@ const EditProfile = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
         <div className="max-w-2xl mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Edit Profile</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Edit Profile
+            </h1>
             <button
               onClick={() => navigate(`/${profile.username}`)}
-              className="text-blue-500 hover:text-blue-600"
+              className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
             >
               View Profile
             </button>
@@ -244,15 +259,15 @@ const EditProfile = () => {
             <div
               className={`p-4 rounded-md mb-6 ${
                 error
-                  ? "bg-red-100 text-red-700"
-                  : "bg-green-100 text-green-700"
+                  ? "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-200"
+                  : "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-200"
               }`}
             >
               {error || success}
             </div>
           )}
 
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
             <form onSubmit={handleProfileUpdate} className="space-y-6">
               <div>
                 <h2 className="text-lg font-semibold mb-4">Profile Picture</h2>
@@ -265,7 +280,7 @@ const EditProfile = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Bio
                 </label>
                 <textarea
@@ -273,12 +288,13 @@ const EditProfile = () => {
                   onChange={(e) =>
                     setProfile({ ...profile, bio: e.target.value })
                   }
-                  className="w-full p-3 border rounded-md"
+                  className="w-full p-3 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+             border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500"
                   rows="4"
                   placeholder="Tell people about yourself..."
                   maxLength={500}
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {profile.bio.length}/500 characters
                 </p>
               </div>
@@ -295,11 +311,11 @@ const EditProfile = () => {
             </form>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
             <h2 className="text-lg font-semibold mb-4">Add New Link</h2>
             <form onSubmit={handleAddLink} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Platform
                 </label>
                 <select
@@ -307,7 +323,7 @@ const EditProfile = () => {
                   onChange={(e) =>
                     setNewLink({ ...newLink, platform: e.target.value })
                   }
-                  className="w-full p-3 border rounded-md"
+                  className="w-full p-3 border rounded-md dark:text-gray-100 dark:bg-gray-700 dark:border-gray-600"
                 >
                   <option value="">Select a platform</option>
                   {platforms.map((platform) => (
@@ -319,7 +335,7 @@ const EditProfile = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Title
                 </label>
                 <input
@@ -328,14 +344,14 @@ const EditProfile = () => {
                   onChange={(e) =>
                     setNewLink({ ...newLink, title: e.target.value })
                   }
-                  className="w-full p-3 border rounded-md"
+                  className="w-full p-3 border rounded-md dark:text-gray-100 dark:bg-gray-700 dark:border-gray-600"
                   placeholder="e.g., Follow me on Twitter"
                   maxLength={50}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   URL
                 </label>
                 <input
@@ -344,13 +360,13 @@ const EditProfile = () => {
                   onChange={(e) =>
                     setNewLink({ ...newLink, url: e.target.value })
                   }
-                  className="w-full p-3 border rounded-md"
+                  className="w-full p-3 border rounded-md dark:text-gray-100 dark:bg-gray-700 dark:border-gray-600"
                   placeholder="https://..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Background Color
                 </label>
                 <div className="relative">
@@ -395,7 +411,7 @@ const EditProfile = () => {
             </form>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold mb-4">Your Links</h2>
 
             <DragDropContext onDragEnd={onDragEnd}>
@@ -430,7 +446,7 @@ const EditProfile = () => {
                               }`}
                             >
                               <div
-                                className="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow"
+                                className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm hover:shadow-md transition-shadow"
                                 style={{
                                   backgroundColor: link.backgroundColor,
                                 }}
@@ -441,10 +457,10 @@ const EditProfile = () => {
                                       className={`${platformData.icon} text-2xl`}
                                     ></i>
                                     <div>
-                                      <div className="font-medium">
+                                      <div className="font-medium text-white">
                                         {link.title}
                                       </div>
-                                      <div className="text-sm text-gray-500 truncate">
+                                      <div className="text-sm text-white/75 truncate">
                                         {link.url}
                                       </div>
                                     </div>
@@ -474,6 +490,62 @@ const EditProfile = () => {
                 No links yet. Add your first link above!
               </div>
             )}
+          </div>
+        </div>
+        <div className="max-w-2xl mx-auto px-4 mt-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
+              Account Settings
+            </h2>
+
+            <div className="max-w-md mx-auto text-center">
+              {" "}
+              {/* Added text-center here */}
+              <h3 className="text-md font-medium text-red-600 dark:text-red-400 mb-2">
+                Delete Account
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                Once you delete your account, there is no going back. Please be
+                certain.
+              </p>
+              {!showDeleteConfirm ? (
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+                  >
+                    Delete Account
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                    Are you absolutely sure? This will:
+                  </p>
+                  <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1 list-none p-0">
+                    {" "}
+                    {/* Removed list-disc and padding, added list-none */}
+                    <li>Permanently delete your profile</li>
+                    <li>Remove all your links</li>
+                    <li>Delete all your data</li>
+                  </ul>
+                  <div className="flex justify-center space-x-4">
+                    <button
+                      onClick={handleDeleteAccount}
+                      className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+                    >
+                      Yes, delete my account
+                    </button>
+                    <button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
