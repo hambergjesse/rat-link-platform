@@ -2,12 +2,16 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Profile from "./components/Profile";
+
+import TestConnection from "./components/TestConnection";
+
 import EditProfile from "./components/EditProfile";
 import Navbar from "./components/NavBar";
 import logo from "./assets/brckt-wordmark.svg";
 
 const Home = () => (
   <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
+    <TestConnection />
     <div className="max-w-md w-full space-y-8">
       {/* Logo/Brand section */}
       <div className="text-center">
