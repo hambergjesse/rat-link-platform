@@ -47,9 +47,9 @@ const Home = () => (
           </div>
 
           <a
-            href="/auth/twitter"
+            href={`${import.meta.env.VITE_API_URL}/auth/twitter`}
             className="w-full bg-[#1DA1F2] text-white py-3 px-4 rounded-lg hover:bg-[#1a8cd8] 
-                     transition-all duration-200 flex items-center justify-center space-x-3"
+           transition-all duration-200 flex items-center justify-center space-x-3"
           >
             <i className="fa-brands fa-x-twitter text-xl"></i>
             <span>Continue with Twitter</span>
