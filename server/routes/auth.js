@@ -1,46 +1,38 @@
-// auth.js
+// server/routes/auth.js
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
-// Simplify Twitter auth route
-router.get("/twitter", (req, res, next) => {
-  console.log("Starting Twitter auth...");
-  passport.authenticate("twitter", (err) => {
-    if (err) {
-      console.error("Twitter Auth Error:", err);
-      return res.status(500).json({ error: err.message });
-    }
-    next();
-  })(req, res, next);
-});
+// Twitter auth route
+router.get("/twitter", passport.authenticate("twitter"));
 
-// Simplify callback route
+// Twitter callback route
 router.get(
   "/twitter/callback",
   passport.authenticate("twitter", {
-    successRedirect: process.env.CLIENT_URL + "/dashboard",
-    failureRedirect: process.env.CLIENT_URL + "?error=auth_failed",
-  })
+    failureRedirect: "/",
+  }),
+  (req, res) => {
+    // Add logging to see if we reach this point
+    console.log("Twitter auth successful, redirecting to dashboard");
+    // Redirect to dashboard on success
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+  }
 );
 
-// Keep the rest of your routes the same
+// Keep your other routes the same
 router.get("/check", (req, res) => {
-  try {
-    res.json({
-      authenticated: req.isAuthenticated(),
-      user: req.user
-        ? {
-            id: req.user._id,
-            username: req.user.username,
-            profilePicture: req.user.profilePicture,
-          }
-        : null,
-    });
-  } catch (error) {
-    console.error("Auth Check Error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+  console.log("Auth check, authenticated:", req.isAuthenticated());
+  res.json({
+    authenticated: req.isAuthenticated(),
+    user: req.user
+      ? {
+          id: req.user._id,
+          username: req.user.username,
+          profilePicture: req.user.profilePicture,
+        }
+      : null,
+  });
 });
 
 router.get("/logout", (req, res) => {
