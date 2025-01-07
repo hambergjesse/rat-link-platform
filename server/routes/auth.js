@@ -4,7 +4,16 @@ const passport = require("passport");
 const router = express.Router();
 
 // Simplify Twitter auth route
-router.get("/twitter", passport.authenticate("twitter"));
+router.get("/twitter", (req, res, next) => {
+  console.log("Starting Twitter auth...");
+  passport.authenticate("twitter", (err) => {
+    if (err) {
+      console.error("Twitter Auth Error:", err);
+      return res.status(500).json({ error: err.message });
+    }
+    next();
+  })(req, res, next);
+});
 
 // Simplify callback route
 router.get(

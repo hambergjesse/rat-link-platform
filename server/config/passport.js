@@ -15,6 +15,13 @@ const strategyConfig = {
   proxy: true,
 };
 
+// Add this debug log
+console.log("Twitter Strategy Config:", {
+  callbackURL: strategyConfig.callbackURL,
+  consumerKey: strategyConfig.consumerKey ? "Set" : "Not Set",
+  consumerSecret: strategyConfig.consumerSecret ? "Set" : "Not Set",
+});
+
 passport.use(
   new TwitterStrategy(
     strategyConfig,
