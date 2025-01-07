@@ -23,6 +23,7 @@ passport.use(
   new TwitterStrategy(
     strategyConfig,
     async (token, tokenSecret, profile, done) => {
+      console.log("Auth Request URL:", req.url);
       try {
         // Log the profile data for debugging
         console.log("Twitter Profile Data:", {
