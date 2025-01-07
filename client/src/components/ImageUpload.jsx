@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/axios";
 
 const ImageUpload = ({ currentImage, onImageUpdate }) => {
   const [uploading, setUploading] = useState(false);
@@ -22,15 +22,11 @@ const ImageUpload = ({ currentImage, onImageUpdate }) => {
     formData.append("image", file);
 
     try {
-      const response = await axios.post(
-        "/api/upload/profile-picture",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await api.post("/upload/profile-picture", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       onImageUpdate(response.data.profilePicture);
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -42,7 +38,7 @@ const ImageUpload = ({ currentImage, onImageUpdate }) => {
 
   const handleDeleteImage = async () => {
     try {
-      await axios.delete("/api/upload/profile-picture");
+      await api.delete("/upload/profile-picture");
       setPreviewUrl("");
       onImageUpdate("");
     } catch (error) {

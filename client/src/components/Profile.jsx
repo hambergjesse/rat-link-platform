@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { platforms } from "../utils/platforms";
 import { useTheme } from "../contexts/ThemeContext";
+import api from "../utils/axios";
 
 const Profile = () => {
   const { username } = useParams();
@@ -18,7 +18,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`/api/profile/${username}`);
+        const response = await api.get(`/profile/${username}`);
         setProfile(response.data.profile);
         setLinks(response.data.links);
         setIsOwner(response.data.isOwner);
@@ -41,7 +41,7 @@ const Profile = () => {
     setLinks(items);
 
     try {
-      await axios.put("/api/links/reorder", {
+      await api.put("/links/reorder", {
         links: items.map((link, index) => ({
           id: link._id,
           order: index,
