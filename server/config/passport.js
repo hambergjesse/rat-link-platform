@@ -5,10 +5,7 @@ const User = require("../models/User");
 const strategyConfig = {
   consumerKey: process.env.TWITTER_CONSUMER_KEY,
   consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL:
-    process.env.NODE_ENV === "production"
-      ? "https://api.brckt.me/auth/twitter/callback"
-      : "http://localhost:3001/auth/twitter/callback",
+  callbackURL: "https://api.brckt.me/auth/twitter/callback", // hardcode for testing
   includeEmail: false,
   userProfileURL:
     "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true",
@@ -16,10 +13,10 @@ const strategyConfig = {
 };
 
 // Add this debug log
-console.log("Twitter Strategy Config:", {
+console.log("Full Twitter Strategy Config:", {
   callbackURL: strategyConfig.callbackURL,
-  consumerKey: strategyConfig.consumerKey ? "Set" : "Not Set",
-  consumerSecret: strategyConfig.consumerSecret ? "Set" : "Not Set",
+  consumerKey: process.env.TWITTER_CONSUMER_KEY?.substring(0, 5) + "...",
+  consumerSecret: process.env.TWITTER_CONSUMER_SECRET?.substring(0, 5) + "...",
 });
 
 passport.use(
