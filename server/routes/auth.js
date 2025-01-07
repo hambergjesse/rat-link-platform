@@ -1,45 +1,21 @@
+// auth.js
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
-// Twitter auth route with explicit error handling
-router.get("/twitter", (req, res, next) => {
-  passport.authenticate("twitter", (err) => {
-    if (err) {
-      console.error("Twitter Auth Error:", err);
-      return res.redirect(`${process.env.CLIENT_URL}/login?error=auth_failed`);
-    }
-    next();
-  })(req, res, next);
-});
+// Simplify Twitter auth route
+router.get("/twitter", passport.authenticate("twitter"));
 
-// Twitter callback route with explicit error handling
-router.get("/twitter/callback", (req, res, next) => {
-  passport.authenticate("twitter", (err, user, info) => {
-    if (err) {
-      console.error("Twitter Callback Error:", err);
-      return res.redirect(
-        `${process.env.CLIENT_URL}/login?error=callback_failed`
-      );
-    }
-    if (!user) {
-      console.error("No user returned from Twitter");
-      return res.redirect(`${process.env.CLIENT_URL}/login?error=no_user`);
-    }
+// Simplify callback route
+router.get(
+  "/twitter/callback",
+  passport.authenticate("twitter", {
+    successRedirect: process.env.CLIENT_URL + "/dashboard",
+    failureRedirect: process.env.CLIENT_URL + "?error=auth_failed",
+  })
+);
 
-    req.logIn(user, (loginErr) => {
-      if (loginErr) {
-        console.error("Login Error:", loginErr);
-        return res.redirect(
-          `${process.env.CLIENT_URL}/login?error=login_failed`
-        );
-      }
-      return res.redirect(`${process.env.CLIENT_URL}/dashboard`);
-    });
-  })(req, res, next);
-});
-
-// Auth check route
+// Keep the rest of your routes the same
 router.get("/check", (req, res) => {
   try {
     res.json({
@@ -58,7 +34,6 @@ router.get("/check", (req, res) => {
   }
 });
 
-// Logout route
 router.get("/logout", (req, res) => {
   try {
     req.logout((err) => {

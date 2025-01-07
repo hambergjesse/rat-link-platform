@@ -6,8 +6,9 @@ const strategyConfig = {
   consumerKey: process.env.TWITTER_CONSUMER_KEY,
   consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
   callbackURL:
-    process.env.TWITTER_CALLBACK_URL ||
-    "http://localhost:3001/auth/twitter/callback",
+    process.env.NODE_ENV === "production"
+      ? "https://api.brckt.me/auth/twitter/callback"
+      : "http://localhost:3001/auth/twitter/callback",
   includeEmail: false,
   userProfileURL:
     "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true",
