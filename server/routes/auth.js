@@ -10,12 +10,9 @@ router.get("/twitter", passport.authenticate("twitter"));
 router.get(
   "/twitter/callback",
   passport.authenticate("twitter", {
-    failureRedirect: "/",
+    failureRedirect: process.env.CLIENT_URL,
   }),
   (req, res) => {
-    // Add logging to see if we reach this point
-    console.log("Twitter auth successful, redirecting to dashboard");
-    // Redirect to dashboard on success
     res.redirect(`${process.env.CLIENT_URL}/dashboard`);
   }
 );
