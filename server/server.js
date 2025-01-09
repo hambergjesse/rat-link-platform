@@ -106,7 +106,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // User session check endpoint
-app.get("/api/auth/check", (req, res) => {
+app.get("/auth/check", (req, res) => {
   res.json({
     authenticated: req.isAuthenticated(),
     user: req.user
