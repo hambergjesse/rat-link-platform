@@ -105,20 +105,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// User session check endpoint
-app.get("/auth/check", (req, res) => {
-  res.json({
-    authenticated: req.isAuthenticated(),
-    user: req.user
-      ? {
-          id: req.user._id,
-          username: req.user.username,
-          profilePicture: req.user.profilePicture,
-        }
-      : null,
-  });
-});
-
 // Global error handlers
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
