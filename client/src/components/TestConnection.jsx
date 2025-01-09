@@ -6,7 +6,7 @@ const TestConnection = () => {
 
   useEffect(() => {
     // Define the API URL based on your environment
-    const apiUrl = import.meta.env.VITE_API_URL || "https://brckt.me/api";
+    const apiUrl = "https://brckt.me/api";
 
     // Test fetch request to check backend connection
     fetch(`${apiUrl}/health`)
