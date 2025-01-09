@@ -97,7 +97,7 @@ app.use("/api", apiRoutes);
 app.use("/api/upload", uploadRoutes);
 
 // Health check endpoint
-app.get("/health", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
     timestamp: new Date(),
