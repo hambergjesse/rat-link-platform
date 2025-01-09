@@ -9,20 +9,8 @@ const connectDB = async () => {
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     });
 
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-
-    // Log the database name to verify we're connecting to the right database
-    console.log(`Database: ${conn.connection.db.databaseName}`);
-
     return conn;
   } catch (error) {
-    console.error("MongoDB connection error:", {
-      name: error.name,
-      message: error.message,
-      code: error.code,
-      state: mongoose.connection.readyState,
-    });
-
     // Exit process with failure if this is a fatal error
     process.exit(1);
   }

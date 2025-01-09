@@ -19,7 +19,6 @@ router.get(
 
 // Keep your other routes the same
 router.get("/check", (req, res) => {
-  console.log("Auth check, authenticated:", req.isAuthenticated());
   res.json({
     authenticated: req.isAuthenticated(),
     user: req.user
