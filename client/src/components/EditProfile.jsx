@@ -5,6 +5,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useTheme } from "../contexts/ThemeContext";
 import { platforms } from "../utils/platforms";
 import ImageUpload from "./ImageUpload";
+import axios from "axios";
 import api from "../utils/axios";
 
 // Error Boundary Component
@@ -61,7 +62,12 @@ const EditProfile = () => {
     const checkAuthAndFetchProfile = async () => {
       try {
         // Check authentication first
-        const authResponse = await api.get("/auth/check");
+        const authResponse = await axios.get(
+          import.meta.env.VITE_NODE_ENV == "production"
+            ? "https://brckt.me/auth/check"
+            : "http://localhost:3001/auth/check"
+        );
+
         if (!authResponse.data.authenticated) {
           navigate("/");
           return;

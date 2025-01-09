@@ -5,9 +5,6 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: process.env.VITE_NODE_ENV === "development" ? 5173 : undefined,
-    proxy: {
-      "/api": process.env.VITE_API_URL || "http://localhost:3001",
-      "/auth": process.env.VITE_API_URL || "http://localhost:3001",
-    },
+    proxy: {},
   },
 });
