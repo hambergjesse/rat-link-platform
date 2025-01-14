@@ -71,18 +71,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 require("./config/passport");
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    message: "Something went wrong!",
-    error:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "Internal server error",
-  });
-});
-
 // API rate limiting
 const rateLimit = require("express-rate-limit");
 const apiLimiter = rateLimit({
@@ -102,6 +90,17 @@ app.get("/api/health", (req, res) => {
     status: "ok",
     timestamp: new Date(),
     uptime: process.uptime(),
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: "Something went wrong!",
+    error:
+      process.env.NODE_ENV === "development"
+        ? err.message
+        : "Internal server error",
   });
 });
 

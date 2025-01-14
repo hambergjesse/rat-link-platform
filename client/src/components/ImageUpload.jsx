@@ -22,7 +22,7 @@ const ImageUpload = ({ currentImage, onImageUpdate }) => {
     formData.append("image", file);
 
     try {
-      const response = await api.post("/upload/profile-picture", formData, {
+      const response = await api.post("/api/upload/profile-picture", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -38,7 +38,7 @@ const ImageUpload = ({ currentImage, onImageUpdate }) => {
 
   const handleDeleteImage = async () => {
     try {
-      await api.delete("/upload/profile-picture");
+      await api.delete("/api/upload/profile-picture");
       setPreviewUrl("");
       onImageUpdate("");
     } catch (error) {

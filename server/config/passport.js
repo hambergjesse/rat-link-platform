@@ -2,18 +2,25 @@ const passport = require("passport");
 const TwitterStrategy = require("passport-twitter").Strategy;
 const User = require("../models/User");
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 const strategyConfig = {
   consumerKey: process.env.TWITTER_CONSUMER_KEY,
   consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL:
-    process.env.NODE_ENV === "production"
-      ? "https://brckt.me/auth/twitter/callback"
-      : "http://localhost:3001/auth/twitter/callback",
+  callbackURL: process.env.TWITTER_CALLBACK_URL,
   includeEmail: false,
-  userProfileURL:
-    "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true",
-  proxy: true,
+  proxy: !isDevelopment,
+  userProfileURL: "https://api.twitter.com/1.1/account/verify_credentials.json",
 };
+
+// Debug logging
+console.log("Twitter Strategy Config:", {
+  callbackURL: strategyConfig.callbackURL,
+  environment: process.env.NODE_ENV,
+  proxy: strategyConfig.proxy,
+  consumerKeySet: !!process.env.TWITTER_CONSUMER_KEY,
+  consumerSecretSet: !!process.env.TWITTER_CONSUMER_SECRET,
+});
 
 passport.use(
   new TwitterStrategy(

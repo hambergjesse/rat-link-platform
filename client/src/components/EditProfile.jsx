@@ -63,18 +63,20 @@ const EditProfile = () => {
       try {
         // Check authentication first
         const authResponse = await axios.get(
-          import.meta.env.VITE_NODE_ENV == "production"
-            ? "https://brckt.me/auth/check"
-            : "http://localhost:3001/auth/check"
+          `${import.meta.env.VITE_API_URL}/auth/check`,
+          { withCredentials: true }
         );
 
+        console.log("Auth check response:", authResponse.data);
+
         if (!authResponse.data.authenticated) {
+          console.log("Not authenticated, redirecting to home");
           navigate("/");
           return;
         }
 
         // Then fetch profile data
-        const profileResponse = await api.get("/profile");
+        const profileResponse = await api.get("/api/profile");
         setProfile(
           profileResponse.data.profile || {
             username: "",
@@ -84,8 +86,8 @@ const EditProfile = () => {
         );
         setLinks(profileResponse.data.links || []);
       } catch (error) {
-        console.error("Error:", error);
-        setError(error.response?.data?.message || "Failed to load profile");
+        console.error("Auth check error:", error);
+        navigate("/");
       } finally {
         setLoading(false);
       }
@@ -96,7 +98,7 @@ const EditProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await api.get("/profile");
+      const response = await api.get("/api/profile");
       setProfile(response.data.profile);
       setLinks(response.data.links);
       setLoading(false);
@@ -110,7 +112,7 @@ const EditProfile = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.put("/profile", {
+      await api.put("/api/profile", {
         bio: profile.bio,
       });
       setSuccess("Profile updated successfully");
@@ -144,7 +146,7 @@ const EditProfile = () => {
     setError(null);
 
     try {
-      const response = await api.post("/links", newLink, {
+      const response = await api.post("/api/links", newLink, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
@@ -171,7 +173,7 @@ const EditProfile = () => {
     if (!window.confirm("Are you sure you want to delete this link?")) return;
 
     try {
-      await api.delete(`/links/${linkId}`);
+      await api.delete(`/api/links/${linkId}`);
       setLinks(links.filter((link) => link._id !== linkId));
       setSuccess("Link deleted successfully");
       setTimeout(() => setSuccess(null), 3000);
@@ -191,7 +193,7 @@ const EditProfile = () => {
     setLinks(items);
 
     try {
-      await api.put("/links/reorder", {
+      await api.put("/api/links/reorder", {
         links: items.map((link, index) => ({
           id: link._id,
           order: index,
@@ -207,7 +209,7 @@ const EditProfile = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      await api.delete("/account");
+      await api.delete("/api/account");
       navigate("/");
     } catch (error) {
       setError("Failed to delete account");
@@ -224,7 +226,7 @@ const EditProfile = () => {
 
   const handleImageUpload = async (url) => {
     try {
-      await api.put("/profile", {
+      await api.put("/api/profile", {
         ...profile,
         profilePicture: url,
       });

@@ -3,19 +3,53 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
-// Twitter auth route
-router.get("/twitter", passport.authenticate("twitter"));
+// routes/auth.js
+router.get("/twitter", (req, res, next) => {
+  console.log("Starting Twitter auth...");
+  passport.authenticate("twitter")(req, res, next);
+});
 
-// Twitter callback route
-router.get(
-  "/twitter/callback",
-  passport.authenticate("twitter", {
-    failureRedirect: process.env.CLIENT_URL,
-  }),
-  (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
-  }
-);
+router.get("/twitter/callback", (req, res, next) => {
+  passport.authenticate("twitter", (err, user, info) => {
+    if (err) {
+      console.error("Twitter Auth Error:", {
+        message: err.message,
+        oauthError: err.oauthError,
+        stack: err.stack,
+      });
+      return res.redirect(`${process.env.CLIENT_URL}?error=auth_failed`);
+    }
+
+    if (!user) {
+      console.error("No user returned from Twitter");
+      return res.redirect(`${process.env.CLIENT_URL}?error=no_user`);
+    }
+
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        console.error("Login Error:", loginErr);
+        return res.redirect(`${process.env.CLIENT_URL}?error=login_failed`);
+      }
+
+      // Add debug logging
+      console.log("Login successful, user:", user);
+      console.log("Session:", req.session);
+      console.log("Redirecting to:", `${process.env.CLIENT_URL}/dashboard`);
+
+      // Set session cookie explicitly
+      res.cookie("connect.sid", req.sessionID, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        domain:
+          process.env.NODE_ENV === "production" ? "brckt.me" : "localhost",
+      });
+
+      return res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+    });
+  })(req, res, next);
+});
 
 // Keep your other routes the same
 router.get("/check", (req, res) => {

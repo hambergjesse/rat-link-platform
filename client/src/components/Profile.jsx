@@ -18,7 +18,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await api.get(`/profile/${username}`);
+        const response = await api.get(`/api/profile/${username}`);
         setProfile(response.data.profile);
         setLinks(response.data.links);
         setIsOwner(response.data.isOwner);
@@ -41,7 +41,7 @@ const Profile = () => {
     setLinks(items);
 
     try {
-      await api.put("/links/reorder", {
+      await api.put("/api/links/reorder", {
         links: items.map((link, index) => ({
           id: link._id,
           order: index,
