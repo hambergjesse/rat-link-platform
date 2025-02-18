@@ -7,6 +7,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@xmldom/xmldom": "^0.9.7",
     "cloudinary": "^1.41.3",
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
@@ -19,7 +20,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "oauth": "^0.10.0",
     "passport": "^0.6.0",
-    "passport-twitter": "^1.0.4"
+    "passport-twitter": "^0.1.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
