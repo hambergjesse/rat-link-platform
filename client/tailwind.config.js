@@ -18,7 +18,12 @@ module.exports = {
           800: "#5b21b6",
           900: "#4c1d95",
         },
+        background: {
+          light: "#f8f8f8",
+          dark: "#121212",
+        },
         dark: {
+          50: "#121212",
           100: "#1E1E1E",
           200: "#2D2D2D",
           300: "#3D3D3D",
